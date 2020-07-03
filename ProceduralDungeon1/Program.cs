@@ -11,12 +11,14 @@ namespace ProceduralDungeon1
         static void Main(string[] args)
         {            
             Dungeon dungeon = new Dungeon();
-            dungeon.GenerateNoiseMap(48, 27, 45);
+            //dungeon.GenerateNoiseMap(48 * 2, 27 * 2, 40);
+
+            dungeon.GenerateDrunkenWalk(235, 70, 30);
 
             for (int i = 0; i < 5; i++)
-            dungeon.GenerateDungeon(0, 0);
+                dungeon.SmoothDungeon();
 
-            dungeon.FindEdges();
+            //dungeon.FindEdges();
             dungeon.DrawDungeon();
             
             Console.WriteLine("Hello World!");

@@ -11,18 +11,19 @@ namespace ProceduralDungeon1
     {
         static Random Random = new Random();
 
-        bool[,] NoiseMap;// = new bool[27, 48];
-        char[,] DungeonArray = new char[27, 48];
+        bool[,] NoiseMap;
+        char[,] DungeonArray;
         
         public void GenerateNoiseMap(int xSize, int ySize, int threshold)
         {
             NoiseMap = new bool[ySize, xSize];
+            DungeonArray = new char[ySize, xSize];
 
-            for (int y = 0; y < NoiseMap.GetLength(0)-0; y++)
+            for (int y = 0; y < NoiseMap.GetLength(0); y++)
             {
-                for (int x = 0; x < NoiseMap.GetLength(1)-0; x++)
+                for (int x = 0; x < NoiseMap.GetLength(1); x++)
                 {
-                    if (Random.Next(0, 100) > threshold)
+                    if (Random.Next(0, 100) >= threshold)
                         NoiseMap[y, x] = true;
                     else
                         NoiseMap[y, x] = false;
@@ -31,9 +32,70 @@ namespace ProceduralDungeon1
 
             DrawNoiseMap();
             Console.WriteLine(' ');
+            System.Threading.Thread.Sleep(500);
         }
 
-        public void GenerateDungeon(int xSize, int ySize)
+        public void GenerateDrunkenWalk(int xSize, int ySize, int threshold)
+        {
+            NoiseMap = new bool[ySize, xSize];
+            DungeonArray = new char[ySize, xSize];
+
+            for (int y = 0; y < NoiseMap.GetLength(0); y++)
+            {
+                for (int x = 0; x < NoiseMap.GetLength(1); x++)
+                {
+                    NoiseMap[y, x] = true;
+                }
+            }
+
+            int StartX = Random.Next(0, xSize-1);
+            int StartY = Random.Next(0, ySize-1);
+            NoiseMap[StartY, StartX] = false;
+
+            int floorCells = ((xSize * ySize) / 100) * threshold;
+
+            int xChange = 0;
+            int yChange = 0;
+            
+            do
+            {
+                xChange = Random.Next(-1, 2);
+                yChange = Random.Next(-1, 2);
+
+                if (Random.NextDouble() > 0.5)
+                    xChange = 0;
+                else
+                    yChange = 0;
+                
+                int NextX = Clamp(StartX + xChange, 0, xSize-1);
+                int NextY = Clamp(StartY + yChange, 0, ySize-1);
+
+                if (NoiseMap[NextY, NextX] == true)
+                    floorCells--;
+
+                NoiseMap[NextY, NextX] = false;
+                StartX = NextX;
+                StartY = NextY;
+
+                //System.Threading.Thread.Sleep(5);
+                //Console.Clear();
+
+                //DrawNoiseMap();
+
+                //if (floorCells < 1)
+                //{
+                //    DrawNoiseMap();
+                //    int stop = 0;
+                //}
+            }
+            while (floorCells > 0);
+
+
+            DrawNoiseMap();
+            Console.WriteLine(' ');
+        }
+
+        public void SmoothDungeon()
         {
             for (int y = 0; y < NoiseMap.GetLength(0); y++)
             {
