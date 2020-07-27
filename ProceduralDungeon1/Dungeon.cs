@@ -29,6 +29,12 @@ namespace ProceduralDungeon1
 
         List<Vector2> EdgeList = new List<Vector2>();
 
+        //Binary space description. Assumed to be rectangular
+        struct Space
+        {
+            Vector2 TopLeft, BottomRight;
+        };
+
         public void GenerateNoiseMap(int xSize, int ySize, int threshold)
         {
             #region Fill NoiseMap with solid blocks
@@ -448,6 +454,50 @@ namespace ProceduralDungeon1
         public int GetDist(int x1, int y1, int x2, int y2)
         {
             return (int)Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
+        }
+
+        public void BSP()
+        {
+            int xSize = NoiseMap.GetLength(0);
+            int ySize = NoiseMap.GetLength(1);
+            bool live = false;
+
+            for (int div = 0; div < 3; div++)
+            {
+                xSize /= 2;
+
+                for (int x = 0; x < IntPercent(60, NoiseMap.GetLength(0)); x++)
+                {
+                    for (int y = 0; y < IntPercent(60, NoiseMap.GetLength(1)); y++)
+                    {
+                        if (x < xSize && y < ySize)
+                        {
+                            NoiseMap[x, y] = live;
+                        }
+                    }
+                }
+
+                ySize /= 2;
+                live = !live;
+            }
+
+            //for (int x = 0; x < NoiseMap.GetLength(0); x++)
+            //{
+            //    for (int y = 0; y < NoiseMap.GetLength(1); y++)
+            //    {
+            //        if (x < NoiseMap.GetLength(0) / 2)
+            //        {
+            //            NoiseMap[x, y] = false;
+            //        }
+            //    }
+            //}
+        }
+
+        public int IntPercent(int value, int percentOf)
+        {
+            float ret = (percentOf / 100.0f);
+            ret *= value;
+            return (int)ret;
         }
     }
 }
