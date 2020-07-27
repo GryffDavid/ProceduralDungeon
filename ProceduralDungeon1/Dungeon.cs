@@ -29,8 +29,6 @@ namespace ProceduralDungeon1
 
         List<Vector2> EdgeList = new List<Vector2>();
 
-
-
         public void GenerateNoiseMap(int xSize, int ySize, int threshold)
         {
             #region Fill NoiseMap with solid blocks
@@ -138,9 +136,9 @@ namespace ProceduralDungeon1
                     NoiseMap[NextX, NextY] = false;
                     floorCells--;
 
-                    //System.Threading.Thread.Sleep(20);
+                    System.Threading.Thread.Sleep(20);
                     //Console.Clear();
-                    //DrawNoiseMap();
+                    DrawNoiseMap();
                 }
 
                 CurrentX = NextX;
@@ -151,7 +149,7 @@ namespace ProceduralDungeon1
             
         }
 
-        public void SmoothDungeon(int thresh)
+        public void SmoothDungeon()
         {
             for (int x = 0; x < NoiseMap.GetLength(0); x++)
             {
@@ -177,7 +175,7 @@ namespace ProceduralDungeon1
                     }
 
                     //Cell is dead and 6 or more cells around it are alive. Make this cell alive.
-                    if (alive == false && aliveCount >= thresh)
+                    if (alive == false && aliveCount >= 5)
                     {
                         NoiseMap[x, y] = true;                        
                     }
@@ -368,10 +366,12 @@ namespace ProceduralDungeon1
 
                     float biasChange;
 
+                    //When the currentPos gets close to the endPos
+                    //Start to bias more heavily towards the end point
                     if (Vector2.Distance(endPos, currentPos) < 30)
                         biasChange = 15f;
                     else
-                        biasChange = 2f;
+                        biasChange = 8f;
 
                     if (xChange < dirToEnd.X)
                         xBias += biasChange * Math.Abs(vecDelta.X);
